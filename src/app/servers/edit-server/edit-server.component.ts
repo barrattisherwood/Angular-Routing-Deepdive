@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, Data } from '@angular/router';
 
 import { ServersService } from '../servers.service';
 import { CanComponentDeactivate } from './can-decativate-guard.service';
@@ -16,6 +16,7 @@ export class EditServerComponent implements OnInit, CanComponentDeactivate {
   serverStatus = '';
   allowEdit = false;
   changesSaved = false;
+  id: any;
 
   constructor(
     private serversService: ServersService,
@@ -34,8 +35,11 @@ export class EditServerComponent implements OnInit, CanComponentDeactivate {
     );
     this.route.fragment.subscribe();
     const id = +this.route.snapshot.params['id'];
-    this.server = this.serversService.getServer(id);
-    // Subscribe to route params to update the id if params change
+    this.route.params.subscribe(
+      (data: Data) => {
+        this.server = this.serversService.getServer(+data['id']);
+      }
+    );
     this.serverName = this.server.name;
     this.serverStatus = this.server.status;
   }
